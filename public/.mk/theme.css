@@ -1,0 +1,10 @@
+/* Catpuccin 💜*/
+:root{
+    --primary: #11111b;
+    --secondary: #181825;
+    --tertiary: #1e1e2e;
+    --text: #cdd6f4;
+    --highlight: #89b4fa;
+    --link: #cba6f7;
+    --font: 'Roboto', sans-serif;
+}

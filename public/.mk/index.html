@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/.mk/theme.css" rel="stylesheet">
+    <link href="/.mk/style.css" rel="stylesheet">
+    <link href="/.mk/prism.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav>
+        <div id="nav">
+        <a href="/">Home</a>
+        </div>
+    </nav>
+    <main>
+        <ul><li><a href=".mk/index.html">index.html</a></li><li><a href=".mk/nav.js">nav.js</a></li><li><a href=".mk/prism.css">prism.css</a></li><li><a href=".mk/prism.js">prism.js</a></li><li><a href=".mk/style.css">style.css</a></li><li><a href=".mk/template.html">template.html</a></li><li><a href=".mk/theme.css">theme.css</a></li></ul>
+    </main>
+    <script src="/.mk/prism.js"></script>
+    <script src="/.mk/nav.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('refresh', (msg) => {
+            location.reload();
+        });
+    </script>
+</body>
+
+</html>
