@@ -1,10 +1,10 @@
-# markitty
 A Markdown ➡ HTML live-server + builder.
 
 Takes all .md files inside of the `public` folder and converts them into HTML pages recursively.
 
 Index files are created for folders, containing all the links to the descendants of that folder.
-
+## Preview
+![Preview Image](https://raw.githubusercontent.com/sharkota/markitty/refs/heads/main/public/.mk/preview.png)
 ## Install
 ```bash
 npm i
