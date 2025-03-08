@@ -13,14 +13,15 @@ const server = createServer(app);
 const io = new Server(server);
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 const port = config.port || 3000;
+const public_path = config.public_path || path.join(__dirname, 'public');
 
 // Middleware
-app.use(express.static('public'));
+app.use(express.static(public_path));
 
 // Routes
 app.get('/*', (req: any, res: any) => {
     const decodedPath = decodeURIComponent(req.path);
-    const filePath = path.join(__dirname, 'public', decodedPath + '.md');
+    const filePath = path.join(public_path, decodedPath + '.md');
     const fileName = path.basename(filePath);
     fs.readFile(filePath, 'utf8', (err: any, data: string) => {
         if (err) {
@@ -34,7 +35,7 @@ app.get('/*', (req: any, res: any) => {
 // Helper functions
 function parse_to_html(data: string) {
     let workingData = md.render(data);
-    const template = fs.readFileSync(path.join(__dirname, 'public/.mk', 'template.html'), 'utf8');
+    const template = fs.readFileSync(path.join(public_path, '.mk', 'template.html'), 'utf8');
     const firstHeader = workingData.match(/<h1>(.*?)<\/h1>/);
     workingData = template.replace(/\{\{title\}\}/g, firstHeader ? firstHeader[1] : 'Untitled')
                           .replace('{{content}}', workingData);
@@ -42,7 +43,7 @@ function parse_to_html(data: string) {
 }
 
 function handle_file_error(decodedPath: string, req: any, res: any) {
-    const folderPath = path.join(__dirname, 'public', decodedPath);
+    const folderPath = path.join(public_path, decodedPath);
     if (fs.existsSync(folderPath)) {
         send_folder_contents(folderPath, req, res);
     } else {
@@ -62,7 +63,7 @@ function send_folder_contents(folderPath: string, req: any, res: any) {
         }
     });
     html += '</ul>';
-    const template = fs.readFileSync(path.join(__dirname, 'public/.mk', 'template.html'), 'utf8');
+    const template = fs.readFileSync(path.join(public_path, '.mk', 'template.html'), 'utf8');
     html = template.replace('{{content}}', html)
                    .replace(/\{\{title\}\}/g, 'Folder Contents');
     res.send(html);
@@ -73,7 +74,7 @@ server.listen(port, () => {
     console.log(`Markdown listening on port ${port}`);
 });
 
-const watcher = chokidar.watch(path.join(__dirname, 'public'), {
+const watcher = chokidar.watch(public_path, {
     ignored: /(^|[\/\\])\../,
     persistent: true
 });

@@ -4,7 +4,8 @@ import markdownit from 'markdown-it';
 import chokidar from 'chokidar';
 
 const md = markdownit();
-const srcDir = path.join(__dirname, 'public');
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+const srcDir = config.public_path || path.join(__dirname, 'public');
 const buildDir = path.join(__dirname, 'build');
 
 // Ensure build directory exists
@@ -63,7 +64,7 @@ function send_folder_contents(folderPath: string, relativePath: string) {
         }
     });
     html += '</ul>';
-    const template = fs.readFileSync(path.join(__dirname, 'public/.mk', 'template.html'), 'utf8');
+    const template = fs.readFileSync(path.join(srcDir, '.mk', 'template.html'), 'utf8');
     html = template.replace('{{content}}', html)
                    .replace(/\{\{title\}\}/g, 'Folder Contents');
     const outputDir = path.join(buildDir, relativePath);
