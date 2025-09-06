@@ -6,7 +6,8 @@ import chokidar from 'chokidar';
 const md = markdownit();
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 const srcDir = config.public_path || path.join(__dirname, 'public');
-const buildDir = path.join(__dirname, 'build');
+const prefix = config.prefix ? String(config.prefix).replace(/^\/+|\/+$/g, '') : '';
+const buildDir = path.join(__dirname, 'build', prefix);
 
 // Ensure build directory exists
 if (!fs.existsSync(buildDir)) {
@@ -16,7 +17,10 @@ if (!fs.existsSync(buildDir)) {
 // Helper functions
 function parse_to_html(data: string, fileName: string, relativePath: string) {
     let workingData = md.render(data);
-    const template = fs.readFileSync(path.join(srcDir, '.mk', 'template.html'), 'utf8');
+    let template = fs.readFileSync(path.join(srcDir, '.mk', 'template.html'), 'utf8');
+    template = template.replace(/\{\{prefix\}\}/g, prefix ? '/' + prefix : '');
+    // Ensure trailing slash for prefix if present, else just root
+    template = template.replace(/\{\{prefix_slash\}\}/g, prefix ? '/' + prefix : '');
     const firstHeader = workingData.match(/<h1>(.*?)<\/h1>/);
     workingData = template.replace(/\{\{title\}\}/g, firstHeader ? firstHeader[1] : 'Untitled')
                           .replace('{{content}}', workingData);
@@ -47,24 +51,28 @@ function build_folder_contents(folderPath: string, relativePath: string = '') {
 }
 
 function send_folder_contents(folderPath: string, relativePath: string) {
-    console.log(relativePath)
+    // Add prefix to all links
     const files = fs.readdirSync(folderPath);
     let html = '<ul>';
     files.forEach((file: string) => {
+        let displayFile = file;
+        let linkFile = file;
         if (file.endsWith('.md')) {
-            file = file.slice(0, -3);
-            file = file + '.html'
+            displayFile = file.slice(0, -3);
+            linkFile = displayFile + '.html';
         }
         if (!file.startsWith('.')) {
-            if (file.endsWith('.html')) {
-                html += `<li><a href="/${encodeURI(path.join(decodeURIComponent(relativePath), file))}">${file.slice(0, -5)}</a></li>`;
+            if (linkFile.endsWith('.html')) {
+                html += `<li><a href="/${prefix ? prefix + '/' : ''}${encodeURI(path.join(decodeURIComponent(relativePath), linkFile))}">${displayFile}</a></li>`;
             } else {
-            html += `<li><a href="/${encodeURI(path.join(decodeURIComponent(relativePath), file))}">${file}</a></li>`;
+                html += `<li><a href="/${prefix ? prefix + '/' : ''}${encodeURI(path.join(decodeURIComponent(relativePath), linkFile))}">${displayFile}</a></li>`;
             }
         }
     });
     html += '</ul>';
-    const template = fs.readFileSync(path.join(srcDir, '.mk', 'template.html'), 'utf8');
+    let template = fs.readFileSync(path.join(srcDir, '.mk', 'template.html'), 'utf8');
+    template = template.replace(/\{\{prefix\}\}/g, prefix ? '/' + prefix : '');
+    template = template.replace(/\{\{prefix_slash\}\}/g, prefix ? '/' + prefix : '');
     html = template.replace('{{content}}', html)
                    .replace(/\{\{title\}\}/g, 'Folder Contents');
     const outputDir = path.join(buildDir, relativePath);

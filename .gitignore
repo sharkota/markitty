@@ -134,3 +134,4 @@ build
 public/*
 !public/.mk
 .temp
+move.sh

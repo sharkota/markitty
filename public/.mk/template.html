@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="{{title}}"/>
     <title>{{title}}</title>
-    <link rel="icon shortcut" href="/.mk/favicon.ico">
-    <link href="/.mk/theme.css" rel="stylesheet">
-    <link href="/.mk/style.css" rel="stylesheet">
-    <link href="/.mk/prism.css" rel="stylesheet">
+    <link rel="icon shortcut" href="{{prefix_slash}}/.mk/favicon.ico">
+    <link href="{{prefix_slash}}/.mk/theme.css" rel="stylesheet">
+    <link href="{{prefix_slash}}/.mk/style.css" rel="stylesheet">
+    <link href="{{prefix_slash}}/.mk/prism.css" rel="stylesheet">
 </head>
 
 <body>
     <nav>
         <div id="nav">
-            <a href="/">Home</a>
+            <a id="nav-root" href="{{prefix_slash}}">linux</a>
         </div>
     </nav>
     <main>
         {{content}}
     </main>
-    <script src="/.mk/prism.js"></script>
-    <script src="/.mk/nav.js"></script>
+    <script src="{{prefix_slash}}/.mk/prism.js"></script>
+    <script src="{{prefix_slash}}/.mk/nav.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
